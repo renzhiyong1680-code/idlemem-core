@@ -1,0 +1,27 @@
+# 闲存云 Agent systemd 单元
+# 安装位置：/etc/systemd/system/xiancun-agent.service
+# 配合 deploy/install-agent.sh 使用；也可手动安装：
+#   cp xiancun-agent.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now xiancun-agent
+
+[Unit]
+Description=XianCun Cloud - xiancun-agent (idle memory node)
+Documentation=https://github.com/xiancuncloud/idlemem-core
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=xiancun
+Group=xiancun
+WorkingDirectory=/opt/xiancun
+ExecStart=/usr/local/bin/xiancun-agent -config /etc/xiancun/agent-config.json
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+# 输出交给 journald：journalctl -u xiancun-agent -f
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

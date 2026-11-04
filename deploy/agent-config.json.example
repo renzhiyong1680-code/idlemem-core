@@ -1,0 +1,18 @@
+{
+  "_comment": "闲存云 Agent（xiancun-agent）生产配置模板。JSON 不支持注释，本文件所有 _comment 字段仅作说明，程序解析时自动忽略未知字段。interval 为纳秒：10s=10000000000",
+
+  "server": "http://127.0.0.1:8080",
+  "_comment2": "控制面 REST API 地址；生产环境指向服务端 API（如 http://server.example.com:8080）",
+
+  "kv_addr": "0.0.0.0:16380",
+  "_comment3": "KV 服务监听地址。网关按控制面记录的节点 IP + 本端口转发数据；节点在 NAT 后需做端口映射或配置公网可拨通地址",
+
+  "node_id": "",
+  "_comment4": "节点 ID；留空时自动生成稳定 ID（基于主机指纹）",
+
+  "interval": 10000000000,
+  "_comment5": "心跳上报间隔（纳秒），生产建议 10s-30s",
+
+  "kv_max_bytes": 0,
+  "_comment6": "KV 引擎容量上限（字节）；0 表示由治理器按本机内存动态决定"
+}

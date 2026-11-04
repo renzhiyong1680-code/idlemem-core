@@ -125,6 +125,14 @@ func main() {
 }
 ```
 
+## 部署（Linux / systemd）
+
+生产环境一键部署见 [`deploy/`](deploy/)（systemd 单元 + 配置模板 + 安装/卸载脚本）：
+
+```bash
+sudo ./deploy/install-agent.sh --binary ./xiancun-agent-linux --server http://server.example.com:8080
+```
+
 ## 包说明
 
 | 包 | 职责 |
