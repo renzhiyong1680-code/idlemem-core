@@ -140,3 +140,50 @@ func TestValueCopyIsolation(t *testing.T) {
 		t.Fatalf("mutating returned copy changed stored value: %q", v2)
 	}
 }
+
+func TestCanFit(t *testing.T) {
+	s := New(Options{MaxBytes: 100})
+	s.Set("a", make([]byte, 40), 0)
+	if !s.CanFit(60) {
+		t.Fatal("CanFit(60) should be true (40+60=100)")
+	}
+	if s.CanFit(61) {
+		t.Fatal("CanFit(61) should be false (40+61>100)")
+	}
+	// 上限 0 = 不限。
+	s2 := New(Options{})
+	if !s2.CanFit(1 << 40) {
+		t.Fatal("unlimited store should always fit")
+	}
+}
+
+func TestTTLQuery(t *testing.T) {
+	s := New(Options{})
+	s.Set("k", []byte("v"), 100*time.Millisecond)
+
+	d, ok := s.TTL("k")
+	if !ok {
+		t.Fatal("TTL should report existing key")
+	}
+	if d <= 0 || d > 100*time.Millisecond {
+		t.Fatalf("TTL = %v, want in (0,100ms]", d)
+	}
+
+	// 永不过期键。
+	s.Set("perm", []byte("v"), 0)
+	d, ok = s.TTL("perm")
+	if !ok || d != -1 {
+		t.Fatalf("permanent TTL = %v,%v; want -1,true", d, ok)
+	}
+
+	// 不存在键。
+	if _, ok := s.TTL("nope"); ok {
+		t.Fatal("TTL missing key should be false")
+	}
+
+	// 过期后视为不存在。
+	time.Sleep(120 * time.Millisecond)
+	if _, ok := s.TTL("k"); ok {
+		t.Fatal("TTL expired key should be false")
+	}
+}

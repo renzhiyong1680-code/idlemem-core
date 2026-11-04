@@ -51,6 +51,37 @@ idlemem-core demo, node=a512c2fde7be0a23, version=0.1.0
 [heartbeat] status=online capacity=12011229184 bytes used=0 bytes sys_used=52.3% uptime=0s
 ```
 
+## Agent 可运行外壳（`cmd/xiancun-agent`）
+
+仓库自带一个**零依赖、可直接运行**的 Agent 外壳：把核心库装配成真正的"贡献节点"进程，既上报心跳到控制面，又暴露一个**最小 Redis 协议 KV 端口**，供企业客户端或平台网关存取缓存。
+
+```bash
+# 本机运行（默认连 http://127.0.0.1:8080，KV 端口 :16380）
+go run ./cmd/xiancun-agent
+
+# 指定控制面与 KV 端口
+go run ./cmd/xiancun-agent -server http://1.2.3.4:8080 -kv :16380 -interval 10s
+
+# 用 JSON 配置文件
+go run ./cmd/xiancun-agent -config agent.json
+
+# 交叉编译到 Linux（云主机） / macOS
+GOOS=linux  GOARCH=amd64 go build -o xiancun-agent-linux  ./cmd/xiancun-agent
+GOOS=darwin GOARCH=amd64 go build -o xiancun-agent-macos ./cmd/xiancun-agent
+```
+
+配置字段（JSON）：
+
+| 字段 | 说明 | 默认 |
+|---|---|---|
+| `server` | 控制面 REST API 地址 | `http://127.0.0.1:8080` |
+| `kv_addr` | KV 服务监听地址（Redis 协议） | `:16380` |
+| `node_id` | 节点 ID，空则自动生成稳定 ID | 自动 |
+| `interval` | 心跳上报间隔（纳秒） | `10s` |
+| `kv_max_bytes` | KV 引擎容量上限，0 由治理器动态决定 | `0` |
+
+KV 端口支持命令：`PING / SET [EX] / GET / DEL / EXPIRE / TTL / INFO / QUIT`。写入会受治理器容量约束（超出当前可贡献容量返回 `ERR out of capacity`），`used_bytes` 随心跳上报控制面。
+
 ## 嵌入指南（三步接入）
 
 ```go
@@ -101,9 +132,10 @@ func main() {
 | `agent` | 整合入口：依赖装配、后台循环（采样→决策→上报）、生命周期、容量回调 |
 | `meminfo` | 跨平台物理内存快照（Total / Available / Used / UsedPct） |
 | `governor` | 计算可贡献容量：保底预留、高水位缩容、低水位恢复、迟滞防抖 |
-| `kvstore` | 纯内存 KV 引擎：分片锁、TTL 惰性过期、值拷贝隔离、容量统计 |
+| `kvstore` | 纯内存 KV 引擎：分片锁、TTL 惰性过期、值拷贝隔离、容量统计与上限检查（`CanFit`）、TTL 查询（`TTL`） |
 | `heartbeat` | 心跳数据模型 + 上报接口；内置 HTTP/JSON 实现（可替换） |
 | `nodeid` | 基于主机指纹的稳定节点 ID |
+| `cmd/xiancun-agent` | Agent 可运行外壳：心跳上报 + Redis 协议 KV 服务（零依赖） |
 
 ## 测试
 

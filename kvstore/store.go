@@ -146,6 +146,44 @@ func (s *Store) Capacity() uint64 {
 	return s.opts.MaxBytes
 }
 
+// CanFit 判断再写入 n 字节是否会超出容量上限。
+// 上限为 0 时表示不限制，始终返回 true。
+func (s *Store) CanFit(n uint64) bool {
+	max := s.opts.MaxBytes
+	if max == 0 {
+		return true
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.used+n <= max
+}
+
+// TTL 返回键的剩余存活时间。
+// 返回 (剩余时长, true) 表示键存在且未过期（剩余时长可为 0）；
+// 返回 (0, false) 表示键不存在或已过期。
+func (s *Store) TTL(key string) (time.Duration, bool) {
+	sh := s.shards[s.idx(key)]
+	sh.mu.RLock()
+	e, ok := sh.data[key]
+	sh.mu.RUnlock()
+	if !ok {
+		return 0, false
+	}
+	if s.expired(e) {
+		s.Delete(key)
+		return 0, false
+	}
+	if e.expire == 0 {
+		// 永不过期，返回 -1 语义由上层解释。
+		return -1, true
+	}
+	remain := time.Until(time.Unix(0, e.expire))
+	if remain < 0 {
+		remain = 0
+	}
+	return remain, true
+}
+
 // Purge 清理所有过期条目，返回清理数量。
 func (s *Store) Purge() int {
 	now := time.Now().UnixNano()
