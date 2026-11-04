@@ -73,10 +73,11 @@ func (s State) String() string {
 
 // Governor 计算可贡献容量，并跟踪贡献状态。
 type Governor struct {
-	mu    sync.Mutex
-	cfg   Config
-	state State
-	last  uint64
+	mu       sync.Mutex
+	cfg      Config
+	state    State
+	last     uint64
+	disabled bool // 手动暂停（节点主人通过托盘/菜单栏控制，优先于内存压力判定）
 }
 
 // New 创建一个 Governor。
@@ -108,8 +109,31 @@ func (g *Governor) StateOf() State {
 	return g.state
 }
 
+// SetEnabled 手动开启/暂停贡献（节点主人控制）。
+// 暂停时强制贡献 0 并进入 suspended 状态；恢复后回到内存压力判定。
+func (g *Governor) SetEnabled(enabled bool) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.disabled = !enabled
+	if !enabled {
+		g.state = StateSuspended
+		g.last = 0
+	}
+}
+
+// Enabled 返回当前是否允许贡献（手动开关 && 内存压力未挂起）。
+func (g *Governor) Enabled() bool {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	return !g.disabled
+}
+
 // compute 在锁内执行实际计算。
 func (g *Governor) compute(info meminfo.Info) uint64 {
+	// 手动暂停优先于内存压力判定。
+	if g.disabled {
+		return 0
+	}
 	// 进入/退出挂起状态的判定。
 	if info.UsedPct >= g.cfg.HighUsedPct {
 		g.state = StateSuspended
