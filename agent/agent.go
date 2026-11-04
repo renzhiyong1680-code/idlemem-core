@@ -42,6 +42,8 @@ type Config struct {
 	ReportInterval time.Duration
 	// CapacityChangeCb 容量变化回调（贡献量增加/减少/归零时触发）。
 	CapacityChangeCb func(oldBytes, newBytes uint64)
+	// KVAddr 本节点 KV 服务监听地址（随心跳上报，供网关转发）。
+	KVAddr string
 }
 
 // Validate 校验必要依赖，缺失时报错。
@@ -175,6 +177,7 @@ func (a *Agent) tick(ctx context.Context) {
 		TotalBytes:    info.Total,
 		UptimeSeconds: int64(time.Since(a.started).Seconds()),
 		ReportedAt:    time.Now(),
+		KVAddr:        a.cfg.KVAddr,
 	}
 	if err := a.cfg.Reporter.Report(ctx, snap); err != nil {
 		// 心跳失败不致命，下一周期重试。

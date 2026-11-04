@@ -111,6 +111,7 @@ func main() {
 		Reporter:       rep,
 		StoreOpts:      kvstore.Options{MaxBytes: cfg.KVMaxBytes},
 		ReportInterval: cfg.Interval,
+		KVAddr:         cfg.KVAddr,
 	})
 	if err != nil {
 		logger.Fatalf("create agent core: %v", err)

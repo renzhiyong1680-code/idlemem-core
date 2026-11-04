@@ -41,6 +41,9 @@ type Snapshot struct {
 	UptimeSeconds int64 `json:"uptime_seconds"`
 	// ReportedAt 上报时间。
 	ReportedAt time.Time `json:"reported_at"`
+	// KVAddr 本节点 KV 服务的监听地址（如 "0.0.0.0:16380"），
+	// 供控制面网关把数据请求转发到本节点。
+	KVAddr string `json:"kv_addr,omitempty"`
 }
 
 // Reporter 心跳上报接口。实现可以是 HTTP、gRPC、WebSocket 等。
