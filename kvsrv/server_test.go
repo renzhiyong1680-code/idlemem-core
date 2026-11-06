@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -109,6 +110,20 @@ func newFakeBackend(t *testing.T, capBytes uint64) *fakeBackend {
 	return &fakeBackend{st: st, cap: capBytes}
 }
 
+// ttlBetween 断言 TTL 落在 [lo, hi]。
+// 服务端按整秒截断剩余时间，所以设置 60 秒后立即读可能已是 59，
+// 设置 1 秒后可能已是 0；精确断言会随机器快慢时通时不通。
+func ttlBetween(t *testing.T, got string, lo, hi int) {
+	t.Helper()
+	n, err := strconv.Atoi(got)
+	if err != nil {
+		t.Fatalf("TTL not an integer: %q", got)
+	}
+	if n < lo || n > hi {
+		t.Fatalf("TTL = %d, want %d..%d", n, lo, hi)
+	}
+}
+
 // TestKVSrv_FullFlow 验证核心命令流：PING / SET / GET / TTL / DEL / INFO。
 func TestKVSrv_FullFlow(t *testing.T) {
 	be := newFakeBackend(t, 1<<20) // 1MB 引擎
@@ -124,9 +139,7 @@ func TestKVSrv_FullFlow(t *testing.T) {
 	if got := c.sendBulk(t, "GET", "k1"); got != "v1" {
 		t.Fatalf("GET = %q", got)
 	}
-	if got := c.send(t, "TTL", "k1"); got != "60" {
-		t.Fatalf("TTL = %q", got)
-	}
+	ttlBetween(t, c.send(t, "TTL", "k1"), 59, 60)
 	if got := c.send(t, "DEL", "k1"); got != "1" {
 		t.Fatalf("DEL = %q", got)
 	}
@@ -168,9 +181,7 @@ func TestKVSrv_ExpireAndTTL(t *testing.T) {
 	if got := c.send(t, "EXPIRE", "e1", "1"); got != "1" {
 		t.Fatalf("EXPIRE = %q", got)
 	}
-	if got := c.send(t, "TTL", "e1"); got != "1" {
-		t.Fatalf("TTL = %q", got)
-	}
+	ttlBetween(t, c.send(t, "TTL", "e1"), 0, 1)
 	time.Sleep(1100 * time.Millisecond)
 	if got := c.sendBulk(t, "GET", "e1"); got != "$-1" {
 		t.Fatalf("GET expired = %q", got)
