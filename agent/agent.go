@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xiancuncloud/idlemem-core/governor"
-	"github.com/xiancuncloud/idlemem-core/heartbeat"
-	"github.com/xiancuncloud/idlemem-core/kvstore"
-	"github.com/xiancuncloud/idlemem-core/meminfo"
+	"github.com/renzhiyong1680-code/idlemem-core/governor"
+	"github.com/renzhiyong1680-code/idlemem-core/heartbeat"
+	"github.com/renzhiyong1680-code/idlemem-core/kvstore"
+	"github.com/renzhiyong1680-code/idlemem-core/meminfo"
 )
 
 // Version 核心库版本号，会随心跳上报。

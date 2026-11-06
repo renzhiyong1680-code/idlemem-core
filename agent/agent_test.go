@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xiancuncloud/idlemem-core/governor"
-	"github.com/xiancuncloud/idlemem-core/heartbeat"
-	"github.com/xiancuncloud/idlemem-core/meminfo"
+	"github.com/renzhiyong1680-code/idlemem-core/governor"
+	"github.com/renzhiyong1680-code/idlemem-core/heartbeat"
+	"github.com/renzhiyong1680-code/idlemem-core/meminfo"
 )
 
 // fakeMem 可控的内存快照源。

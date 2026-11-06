@@ -21,13 +21,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/xiancuncloud/idlemem-core/agent"
-	"github.com/xiancuncloud/idlemem-core/governor"
-	"github.com/xiancuncloud/idlemem-core/heartbeat"
-	"github.com/xiancuncloud/idlemem-core/kvsrv"
-	"github.com/xiancuncloud/idlemem-core/kvstore"
-	"github.com/xiancuncloud/idlemem-core/meminfo"
-	"github.com/xiancuncloud/idlemem-core/nodeid"
+	"github.com/renzhiyong1680-code/idlemem-core/agent"
+	"github.com/renzhiyong1680-code/idlemem-core/governor"
+	"github.com/renzhiyong1680-code/idlemem-core/heartbeat"
+	"github.com/renzhiyong1680-code/idlemem-core/kvsrv"
+	"github.com/renzhiyong1680-code/idlemem-core/kvstore"
+	"github.com/renzhiyong1680-code/idlemem-core/meminfo"
+	"github.com/renzhiyong1680-code/idlemem-core/nodeid"
 )
 
 // defaultKVAddr 默认 KV 服务监听地址（与生产网关端口区分开）。

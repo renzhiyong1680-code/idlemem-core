@@ -9,7 +9,7 @@ package governor
 import (
 	"sync"
 
-	"github.com/xiancuncloud/idlemem-core/meminfo"
+	"github.com/renzhiyong1680-code/idlemem-core/meminfo"
 )
 
 // Config 定义贡献治理参数。

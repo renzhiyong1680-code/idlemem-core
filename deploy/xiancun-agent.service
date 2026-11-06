@@ -6,7 +6,7 @@
 
 [Unit]
 Description=XianCun Cloud - xiancun-agent (idle memory node)
-Documentation=https://github.com/xiancuncloud/idlemem-core
+Documentation=https://github.com/renzhiyong1680-code/idlemem-core
 After=network-online.target
 Wants=network-online.target
 

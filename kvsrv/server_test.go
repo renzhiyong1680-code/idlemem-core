@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/xiancuncloud/idlemem-core/heartbeat"
-	"github.com/xiancuncloud/idlemem-core/kvstore"
+	"github.com/renzhiyong1680-code/idlemem-core/heartbeat"
+	"github.com/renzhiyong1680-code/idlemem-core/kvstore"
 )
 
 // fakeBackend 用真实 kvstore.Store 实现 Backend。

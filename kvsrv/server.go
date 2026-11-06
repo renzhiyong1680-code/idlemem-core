@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/xiancuncloud/idlemem-core/heartbeat"
-	"github.com/xiancuncloud/idlemem-core/kvstore"
+	"github.com/renzhiyong1680-code/idlemem-core/heartbeat"
+	"github.com/renzhiyong1680-code/idlemem-core/kvstore"
 )
 
 // Backend 是 RESP 服务器依赖的 KV 后端（由 Agent 装配实现）。
