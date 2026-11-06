@@ -74,6 +74,7 @@ func main() {
 		nodeID   = flag.String("id", "", "node id (default: auto-generated stable id)")
 		interval = flag.Duration("interval", 0, "heartbeat interval (default 10s)")
 		token    = flag.String("node-token", "", "node token for authenticated heartbeat (optional)")
+		check    = flag.Bool("check", false, "run a pre-flight self check and exit (exit code 0 = all passed)")
 		showVer  = flag.Bool("version", false, "print version and exit")
 	)
 	flag.Parse()
@@ -111,6 +112,12 @@ func main() {
 	id := cfg.NodeID
 	if id == "" {
 		id = nodeid.String()
+	}
+
+	// 自检模式：只做检查并退出，不启动服务、不起后台循环。
+	// 放在 logger 之前，让输出保持一份干净的检查报告，便于脚本解析。
+	if *check {
+		os.Exit(runCheck(cfg, id))
 	}
 	logger.Printf("node id: %s", id)
 
