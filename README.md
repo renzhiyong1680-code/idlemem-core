@@ -2,6 +2,10 @@
 
 > 闲存云（XianCun Cloud）Agent 核心库 —— 把闲置电脑内存变成可收益资源的跨平台 Go 库。
 
+**闲存云**把个人与中小机房闲置的内存聚成一个分布式 KV 缓存池，本仓库是其中的**贡献节点核心库**。配套的两个仓库：[idlemem-server](https://github.com/renzhiyong1680-code/idlemem-server)（调度控制面，Redis 协议网关在此）、[idlemem-desktop](https://github.com/renzhiyong1680-code/idlemem-desktop)（Windows 托盘 / macOS 菜单栏外壳）。
+
+项目定位、**明确不做什么**、当前进度与关键参数，集中在 [项目介绍](https://github.com/renzhiyong1680-code/idlemem-core/blob/master/docs/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.md)。第一次接触这个项目，建议先读那篇。
+
 `idlemem-core` 是一个**零第三方依赖、跨平台（Windows / Linux / macOS）**的 Go 核心库，用于构建"闲置内存贡献节点"（Agent）。它负责：采集系统内存 → 计算可安全贡献的容量（保底预留 + 高负载缩容 + 迟滞防抖）→ 提供带 TTL 的内存 KV 引擎 → 周期上报心跳到平台控制面。
 
 各端外壳程序（Windows 托盘、macOS 菜单栏、Linux 守护进程）只需嵌入本库，即可获得完整的贡献节点能力。

@@ -3,6 +3,9 @@ name: ci
 on:
   push:
     branches: [master, main]
+    # 纯库不发二进制，但 tag 也要跑测试：打标签时点的代码必须可验证，
+    # 否则 Release 页面上没有任何 CI 记录，外部无法判断 v0.1.1 是否可信。
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
