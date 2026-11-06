@@ -2,6 +2,13 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 变更
+
+- 许可证由 MIT 变更为 AGPL-3.0（GNU Affero General Public License v3.0），保留后续商业授权选项；
+  `v0.1.0` 及更早版本仍按 MIT 发布，该授权不可撤销。
+
 ## [v0.1.0] - 2026-11-06
 
 首个公开版本：闲存云 Agent 的跨平台核心库，以及可直接运行的 Agent 外壳。
