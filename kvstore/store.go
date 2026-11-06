@@ -158,6 +158,38 @@ func (s *Store) CanFit(n uint64) bool {
 	return s.used+n <= max
 }
 
+// UsedAfterSet 估算把 key 写成 n 字节后的总占用。
+// 覆盖已有键时旧值会被释放，因此先减去旧值长度——否则接近上限时
+// 同键覆盖写会被误判为容量不足。
+func (s *Store) UsedAfterSet(key string, n uint64) uint64 {
+	sh := s.shards[s.idx(key)]
+	sh.mu.RLock()
+	old := sh.data[key]
+	sh.mu.RUnlock()
+
+	var oldLen uint64
+	if old != nil && !s.expired(old) {
+		oldLen = uint64(len(old.value))
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	used := s.used
+	if oldLen > 0 && used >= oldLen {
+		used -= oldLen
+	}
+	return used + n
+}
+
+// CanFitSet 判断把 key 写成 n 字节后是否仍在容量上限内（覆盖写语义）。
+func (s *Store) CanFitSet(key string, n uint64) bool {
+	max := s.opts.MaxBytes
+	if max == 0 {
+		return true
+	}
+	return s.UsedAfterSet(key, n) <= max
+}
+
 // TTL 返回键的剩余存活时间。
 // 返回 (剩余时长, true) 表示键存在且未过期（剩余时长可为 0）；
 // 返回 (0, false) 表示键不存在或已过期。

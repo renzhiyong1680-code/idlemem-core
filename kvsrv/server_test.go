@@ -21,10 +21,10 @@ type fakeBackend struct {
 	used uint64
 }
 
-func (f *fakeBackend) Store() *kvstore.Store      { return f.st }
-func (f *fakeBackend) Capacity() uint64           { return f.cap }
-func (f *fakeBackend) Status() heartbeat.Status   { return heartbeat.StatusOnline }
-func (f *fakeBackend) SetUsedBytes(n uint64)      { f.used = n }
+func (f *fakeBackend) Store() *kvstore.Store    { return f.st }
+func (f *fakeBackend) Capacity() uint64         { return f.cap }
+func (f *fakeBackend) Status() heartbeat.Status { return heartbeat.StatusOnline }
+func (f *fakeBackend) SetUsedBytes(n uint64)    { f.used = n }
 
 func startTestServer(t *testing.T, backend Backend) (addr string) {
 	t.Helper()

@@ -62,10 +62,10 @@ func main() {
 	logger := log.New(os.Stdout, "[agent] ", log.LstdFlags|log.Lmsgprefix)
 
 	var (
-		cfgPath = flag.String("config", "", "config json file path (optional)")
-		server  = flag.String("server", "", "control plane API address, e.g. http://127.0.0.1:8080")
-		kvAddr  = flag.String("kv", "", "KV service listen address, e.g. :16380")
-		nodeID  = flag.String("id", "", "node id (default: auto-generated stable id)")
+		cfgPath  = flag.String("config", "", "config json file path (optional)")
+		server   = flag.String("server", "", "control plane API address, e.g. http://127.0.0.1:8080")
+		kvAddr   = flag.String("kv", "", "KV service listen address, e.g. :16380")
+		nodeID   = flag.String("id", "", "node id (default: auto-generated stable id)")
 		interval = flag.Duration("interval", 0, "heartbeat interval (default 10s)")
 	)
 	flag.Parse()

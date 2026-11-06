@@ -157,6 +157,37 @@ func TestCanFit(t *testing.T) {
 	}
 }
 
+func TestCanFitOverwrite(t *testing.T) {
+	// 上限 100：先写 40 字节，再覆盖同一键写 40 字节，实际总占用仍是 40，必须允许。
+	s := New(Options{MaxBytes: 100})
+	s.Set("a", make([]byte, 40), 0)
+	s.Set("b", make([]byte, 60), 0)
+
+	if got := s.UsedBytes(); got != 100 {
+		t.Fatalf("used = %d, want 100", got)
+	}
+	// 覆盖 a（40 字节）为新值 40 字节：总占用不变，不应被判定超限。
+	if !s.CanFitSet("a", 40) {
+		t.Fatal("overwriting same key with same size should fit")
+	}
+	if got := s.UsedAfterSet("a", 40); got != 100 {
+		t.Fatalf("used after overwrite = %d, want 100", got)
+	}
+	// 覆盖为 50 字节：100-40+50=110 > 100，应拒绝。
+	if s.CanFitSet("a", 50) {
+		t.Fatal("overwriting with 50 bytes should not fit (110 > 100)")
+	}
+	// 新键 1 字节：100+1 > 100，应拒绝。
+	if s.CanFitSet("c", 1) {
+		t.Fatal("new key should not fit")
+	}
+	// 上限 0 = 不限。
+	s2 := New(Options{})
+	if !s2.CanFitSet("a", 1<<40) {
+		t.Fatal("unlimited store should always fit")
+	}
+}
+
 func TestTTLQuery(t *testing.T) {
 	s := New(Options{})
 	s.Set("k", []byte("v"), 100*time.Millisecond)

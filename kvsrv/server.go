@@ -124,10 +124,11 @@ func (s *Server) handleSet(conn net.Conn, args []string) {
 	}
 	st := s.backend.Store()
 	// 容量治理：写入后总占用不得超过引擎上限与当前可贡献容量。
+	// 覆盖同一 key 时旧值会释放，必须按覆盖语义估算，否则会误判 OOM。
 	need := uint64(len(value))
-	after := st.UsedBytes() + need
+	after := st.UsedAfterSet(key, need)
 	cap := s.backend.Capacity()
-	if !st.CanFit(need) || (cap > 0 && after > cap) {
+	if !st.CanFitSet(key, need) || (cap > 0 && after > cap) {
 		writeError(conn, "ERR out of capacity")
 		return
 	}
