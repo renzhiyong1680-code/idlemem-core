@@ -10,6 +10,14 @@
 
 各端外壳程序（Windows 托盘、macOS 菜单栏、Linux 守护进程）只需嵌入本库，即可获得完整的贡献节点能力。
 
+## 三仓如何协作
+
+![闲存云三仓架构](docs/assets/architecture.svg)
+
+一次请求的走向：企业客户用任意 Redis 客户端连 `idlemem-server` 的网关（`:6379`）并 `AUTH` 租户 Token → 控制面把订单容量切成小分片，按节点信誉分配给各 Agent → Agent 由本库驱动，把闲置内存作为带 TTL 的 KV 提供（`:16380`）→ 网关写入时转发到所有在线分片节点，本地 miss 时回源。`idlemem-desktop` 是让普通用户一键成为节点的外壳。
+
+不想先编译？`idlemem-server` 仓提供了一条命令跑起整套系统的脚本（Windows 一条命令，或 `docker compose up`），见 [那里 README 的「快速起步」](https://github.com/renzhiyong1680-code/idlemem-server#%E5%BF%AB%E9%80%9F%E8%B5%B7%E6%AD%A5)。
+
 ## 特性
 
 - ✅ **零第三方依赖**：仅使用 Go 标准库与操作系统原生接口，`go mod tidy` 无任何外部包

@@ -10,6 +10,7 @@
 - `CONTRIBUTING.md`、`SECURITY.md`、`.github/ISSUE_TEMPLATE/`：贡献流程、漏洞报告通道与 Issue 模板
 - `docs/项目介绍.md`：项目定位、明确不做什么、能力边界、当前进度与关键参数
 - README 顶部增加三仓导航与项目介绍入口
+- `docs/assets/architecture.svg`：三仓协作架构图，README 新增「三仓如何协作」段并引用该图，含指向 `idlemem-server` 一键起步脚本的入口
 
 ### 变更
 
