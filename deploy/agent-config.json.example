@@ -14,5 +14,8 @@
   "_comment5": "心跳上报间隔（纳秒），生产建议 10s-30s",
 
   "kv_max_bytes": 0,
-  "_comment6": "KV 引擎容量上限（字节）；0 表示由治理器按本机内存动态决定"
+  "_comment6": "KV 引擎容量上限（字节）；0 表示由治理器按本机内存动态决定",
+
+  "node_token": "",
+  "_comment7": "节点令牌：控制面开启 node_token 校验时必填（在服务端执行 xiancun-server -gen-token 生成），以 X-Node-Token 头发送"
 }

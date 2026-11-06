@@ -44,6 +44,8 @@ type config struct {
 	Interval time.Duration `json:"interval"`
 	// KVMaxBytes KV 引擎容量上限（0 表示由治理器动态决定）。
 	KVMaxBytes uint64 `json:"kv_max_bytes"`
+	// NodeToken 节点注册/心跳令牌；控制面开启 node_token 校验时必填。
+	NodeToken string `json:"node_token"`
 }
 
 func (c *config) applyDefaults() {
@@ -67,6 +69,7 @@ func main() {
 		kvAddr   = flag.String("kv", "", "KV service listen address, e.g. :16380")
 		nodeID   = flag.String("id", "", "node id (default: auto-generated stable id)")
 		interval = flag.Duration("interval", 0, "heartbeat interval (default 10s)")
+		token    = flag.String("node-token", "", "node token for authenticated heartbeat (optional)")
 	)
 	flag.Parse()
 
@@ -89,6 +92,9 @@ func main() {
 	if *interval > 0 {
 		cfg.Interval = *interval
 	}
+	if *token != "" {
+		cfg.NodeToken = *token
+	}
 	cfg.applyDefaults()
 
 	// 节点 ID：未指定则自动生成稳定 ID。
@@ -100,7 +106,11 @@ func main() {
 
 	// 装配核心库。
 	prov := meminfo.SystemProvider{}
-	rep := heartbeat.NewHTTPReporter(cfg.Server + "/api/v1/nodes/heartbeat")
+	var repOpts []heartbeat.HTTPOption
+	if cfg.NodeToken != "" {
+		repOpts = append(repOpts, heartbeat.WithHeader("X-Node-Token", cfg.NodeToken))
+	}
+	rep := heartbeat.NewHTTPReporter(cfg.Server+"/api/v1/nodes/heartbeat", repOpts...)
 	core, err := agent.New(agent.Config{
 		NodeID:         id,
 		Version:        agent.Version,

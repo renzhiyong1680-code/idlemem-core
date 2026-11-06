@@ -46,6 +46,9 @@ go build -o xiancun-agent.exe ./cmd/xiancun-agent
 
 # 启动（控制面地址 + KV 端口；Ctrl+C 退出）
 .\xiancun-agent.exe -server http://127.0.0.1:8080 -kv :16380 -interval 10s
+
+# 控制面开启 node_token 校验时，必须带上节点令牌
+.\xiancun-agent.exe -server http://127.0.0.1:8080 -kv :16380 -node-token <node_token>
 ```
 
 Windows 上如需开机自启，可用"任务计划程序"（schtasks）注册任务，或在托盘/服务包装器中托管。
