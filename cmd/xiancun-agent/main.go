@@ -14,6 +14,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -31,6 +32,9 @@ import (
 
 // defaultKVAddr 默认 KV 服务监听地址（与生产网关端口区分开）。
 const defaultKVAddr = ":16380"
+
+// version 由构建脚本通过 -ldflags "-X main.version=..." 注入。
+var version = "dev"
 
 // config Agent 运行配置，可通过 -config <json> 文件或命令行 flag 提供。
 type config struct {
@@ -70,8 +74,14 @@ func main() {
 		nodeID   = flag.String("id", "", "node id (default: auto-generated stable id)")
 		interval = flag.Duration("interval", 0, "heartbeat interval (default 10s)")
 		token    = flag.String("node-token", "", "node token for authenticated heartbeat (optional)")
+		showVer  = flag.Bool("version", false, "print version and exit")
 	)
 	flag.Parse()
+
+	if *showVer {
+		fmt.Printf("xiancun-agent %s\n", version)
+		return
+	}
 
 	cfg := config{}
 	// 优先从 JSON 文件加载，flag 覆盖同名项。
@@ -139,7 +149,7 @@ func main() {
 	if err := core.Start(ctx); err != nil {
 		logger.Fatalf("start agent: %v", err)
 	}
-	logger.Printf("agent started: server=%s kv=%s interval=%s", cfg.Server, cfg.KVAddr, cfg.Interval)
+	logger.Printf("agent started: version=%s server=%s kv=%s interval=%s", version, cfg.Server, cfg.KVAddr, cfg.Interval)
 
 	<-ctx.Done()
 	logger.Printf("shutting down...")
