@@ -12,6 +12,10 @@
 - README 顶部增加三仓导航与项目介绍入口
 - `docs/assets/architecture.svg`：三仓协作架构图，README 新增「三仓如何协作」段并引用该图，含指向 `idlemem-server` 一键起步脚本的入口
 
+### 修复
+
+- `docs/项目介绍.md`：网关命令集由「17 条」更正为实测的 18 条并列出全部命令名；元数据存储由「SQLite」更正为实际的 buntdb 单文件（`idlemem-server.db`）
+
 ### 变更
 
 - `ci.yml` 的 `push` 增加 `tags: ["v*"]`：打标签时也执行测试，Release 页面可查 CI 记录
