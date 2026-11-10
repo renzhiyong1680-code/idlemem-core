@@ -11,6 +11,8 @@
 - `docs/项目介绍.md`：项目定位、明确不做什么、能力边界、当前进度与关键参数
 - README 顶部增加三仓导航与项目介绍入口
 - `docs/assets/architecture.svg`：三仓协作架构图，README 新增「三仓如何协作」段并引用该图，含指向 `idlemem-server` 一键起步脚本的入口
+- `docs/assets/ai-ran-architecture.svg`：AI 基站（AI-RAN）位置图（1200×790），画已实现能力在边缘服务器 / 本地推理 / MEC 业务上的落位，底部固定四条边界（不持久化、单副本掉线即丢与双副本 ≈34.3s、网关写路径串行、无 TLS/AES 且不绑定 AI-RAN 标准）
+- `docs/项目介绍.md` 新增第十一节「和 AI 基站（AI-RAN）是什么关系」：50 字定位、三处落位表（边缘服务器 Agents / 零改造接入 / 计量分账）与边界；README 新增「放到 AI 基站里是什么位置」小节引用该图
 
 ### 修复
 

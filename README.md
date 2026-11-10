@@ -18,6 +18,12 @@
 
 不想先编译？`idlemem-server` 仓提供了一条命令跑起整套系统的脚本（Windows 一条命令，或 `docker compose up`），见 [那里 README 的「快速起步」](https://github.com/renzhiyong1680-code/idlemem-server#%E5%BF%AB%E9%80%9F%E8%B5%B7%E6%AD%A5)。
 
+## 放到 AI 基站（AI-RAN）里是什么位置
+
+![闲存云 × AI 基站（AI-RAN）位置图](docs/assets/ai-ran-architecture.svg)
+
+闲存云把 AI 基站边缘服务器上闲着的内存聚成 Redis 兼容缓存池，让本地推理和 RIC 应用就近取数，不占业务内存 —— 这是"缓存层落位"，不是"我们做 AI-RAN 产品"。落位点、依据与四条边界（不持久化 / 单副本掉线即丢 / 写路径串行 / 无 TLS）都写在 [项目介绍 · 第十一节](https://github.com/renzhiyong1680-code/idlemem-core/blob/master/docs/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D.md)。
+
 ## 特性
 
 - ✅ **零第三方依赖**：仅使用 Go 标准库与操作系统原生接口，`go mod tidy` 无任何外部包
